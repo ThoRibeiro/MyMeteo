@@ -16,7 +16,6 @@ export function getTemperatureForCity(city: string) {
         temperature: cityWeather.temperatureCelsius,
       };
     } else {
-      console.log(`La température pour ${city} n'est pas disponible.`);
-      return null;
+      throw Error(`Aucune méteo trouvé pour la ville : ${city}`)
     }
   }
