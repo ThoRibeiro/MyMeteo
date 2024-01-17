@@ -1,4 +1,5 @@
-import { getTemperatureForCity } from './data/weather';
+import { getWeatherForCity } from './functions/weather';
 
   
-getTemperatureForCity("reims");
+const weather = getWeatherForCity("roubaix");
+console.log(weather.temperatureCelsius)
