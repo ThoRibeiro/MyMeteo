@@ -3,7 +3,7 @@ import { Coordianates, WeatherInterface } from "../interfaces/weather";
 import { CODES_METEO } from "../interfaces/weather-codes";
 
 const COORDINATES_FOR_CITIES: Coordianates[] = [
-  { city: "Lille", latitude: 50.6365654, longitude: 3.0635282 },
+  { city: "Tourcoing", latitude: 50.72391, longitude: 3.16117 },
   { city: "Paris", latitude: 48.8534951, longitude: 2.3483915 },
   { city: "Reims", latitude: 49.2577886, longitude: 4.031926 },
 ];
@@ -26,7 +26,7 @@ export class Weather implements WeatherInterface {
   /**
    * Initialise la météo en appelant l'API météo.
    */
-  async setCurrent() {
+  async setCurrent() : Promise<void> {
     const coordinates = COORDINATES_FOR_CITIES.find(coord => coord.city.toLowerCase() === this.city.toLowerCase());
     if (!coordinates) {
       throw new Error(`Coordonnées non trouvées pour la ville ${this.city}`);
@@ -63,12 +63,21 @@ export class Weather implements WeatherInterface {
   printWeatherForCity(temperatureUnit: TemperatureUnit): void {
     const temperature = temperatureUnit === 'Fahrenheit' ? this.celsiusToFahrenheit(this.temperatureCelsius) : this.temperatureCelsius;
     const codeMeteo = CODES_METEO[this.weatherCode];
-
-    console.log(`\n╔══════════════════════════════╗`);
-    console.log(`║      Météo pour ${this.city}        ║`);
-    console.log(`╠══════════════════════════════╣`);
-    console.log(`║     Température: ${temperature} ${temperatureUnit === 'Fahrenheit' ? "°F" : "°C"}     ║`);
-    console.log(`║       Code météo: ${this.weatherCode} ${codeMeteo.icon}       ║`);
-    console.log(`╚══════════════════════════════╝\n`);
+  
+    // Définir la largeur des colonnes
+    const columnWidth = 30;
+  
+    // Espaces monospaces pour l'alignement
+    const monospaceSpace = '\u2003';
+  
+    // Afficher le tableau avec des lignes de séparation
+    console.log('╔' + '═'.repeat(columnWidth) + '╗');
+    console.log(`║ Météo pour${monospaceSpace}${this.city}`.padEnd(columnWidth, ' ') + ' ║');
+    console.log('╠' + '═'.repeat(columnWidth) + '╣');
+    console.log(`║ Température:${monospaceSpace}${temperature} ${temperatureUnit === 'Fahrenheit' ? "°F" : "°C"}`.padEnd(columnWidth, ' ') + ' ║');
+    console.log(`║ Code météo:${monospaceSpace}${this.weatherCode} ${codeMeteo.icon}`.padEnd(columnWidth, '') + '║');
+    console.log('╚' + '═'.repeat(columnWidth) + '╝');
   }
+  
+  
 }
