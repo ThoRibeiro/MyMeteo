@@ -1,6 +1,8 @@
 
 import { Weather } from './functions/weather';
 
-const weather = new Weather("Lille");
+const currentWeather = new Weather('Paris');
+currentWeather.setCurrent().then(() => {
+    currentWeather.printWeatherForCity("Celsius");
+  });
 
-weather.printWeatherForCity("Lille", "Fahrenheit");

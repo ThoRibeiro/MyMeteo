@@ -5,14 +5,17 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build" : "tsc",
-    "start" : "node dist",
-    "build-start" : "tsc && npm run start"
+    "build": "tsc",
+    "start": "node dist",
+    "build-start": "tsc && npm run start"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
   }
 }

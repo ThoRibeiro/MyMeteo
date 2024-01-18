@@ -6,3 +6,10 @@ export type WeatherInterface = {
   temperatureCelsius: number;
   weatherCode: keyof DescriptionCodeMeteo;
 };
+
+export type Coordianates = {
+  city : string;
+  latitude : number;
+  longitude : number;
+
+}
