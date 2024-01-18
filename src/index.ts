@@ -1,3 +1,3 @@
 import { printWeatherForCity } from './functions/weather';
 
-printWeatherForCity("Lille");
+printWeatherForCity("Lille", "Fahrenheit");
