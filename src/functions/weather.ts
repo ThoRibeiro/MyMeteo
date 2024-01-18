@@ -1,14 +1,10 @@
-import { Weather } from "../interfaces/weather"
+import { Weather } from "../interfaces/weather";
+import { CODES_METEO } from "../interfaces/weather-codes";
 
 const WEATHER_FOR_CITIES: Weather[] = [
-  {
-    city: "Roubaix",
-    country: "France",
-    temperatureCelsius: -10,
-    weatherCode: 3,
-  },
-  { city: "Lille", country: "France", temperatureCelsius: -2, weatherCode: 2 },
-  { city: "Paris", country: "France", temperatureCelsius: -1, weatherCode: 45 },
+  { city: "Tours", country: "France", temperatureCelsius: -1, weatherCode : 0 },
+  { city: "Lille", country: "France", temperatureCelsius: -2, weatherCode: 77 },
+  { city: "Paris", country: "France", temperatureCelsius: -1, weatherCode: 77 },
   { city: "Reims", country: "France", temperatureCelsius: -4, weatherCode: 0 },
 ];
 
@@ -17,8 +13,16 @@ export function getWeatherForCity(city: string): Weather {
     (weather) => weather.city.toLowerCase() === city.toLowerCase()
   );
 
-  if (cityWeather === undefined) {
+  if (cityWeather == undefined) {
     throw Error("Impossible d'avoir la température de la ville " + city);
   }
   return cityWeather;
+}
+
+export function printWeatherForCity(city: string): void {
+  const weather: Weather = getWeatherForCity(city);
+  const codeMeteo = CODES_METEO[weather.weatherCode];
+  console.log("Météo pour " + weather.city);
+  console.log("Température: " + weather.temperatureCelsius + "°C");
+  console.log("Code météo: " + weather.weatherCode, codeMeteo.icon);
 }
