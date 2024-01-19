@@ -1,0 +1,10 @@
+<div class="tile" [style.background]="grandiantBackground">
+  <input
+    type="text"
+    class="tileSelect mokoko"
+    [(ngModel)]="selectedCity"
+    (ngModelChange)="onCityChange()"
+  />
+  <img class="tileIcon" src="{{ icon }}" />
+  <p class="tileTemperature comicSerifPro">{{ temperature }}<span>°C</span></p>
+</div>

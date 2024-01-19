@@ -1,1 +1,14 @@
-/* You can add global styles to this file, and also import other style files */
+@import url("https://use.typekit.net/uqp2qge.css");
+@import url("https://use.typekit.net/uqp2qge.css");
+
+.comicSerifPro {
+  font-family: "comic-serif-pro", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.mokoko {
+  font-family: "mokoko", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}

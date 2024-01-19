@@ -62,6 +62,7 @@ Ce projet est une application web basée sur Angular avec une partie back-end é
 ## Structure des dossiers
 
 - **back-end**: Contient le code source du serveur back-end écrit en TypeScript.
+
   - `/src`: Contient les fichiers sources du projet back-end.
   - `/dist`: Contient les fichiers transpilés et prêts pour l'exécution.
 

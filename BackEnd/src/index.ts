@@ -5,7 +5,6 @@ import express from "express";
 
 import { Weather } from "./functions/weather";
 import { Place } from "./Schemas/place";
-import { Search } from "./functions/search";
 
 const dataSource = new DataSource({
   type: "sqlite",
@@ -24,7 +23,7 @@ async function main() {
   server.get("/weather", async (request, response) => {
     const weather = new Weather(request.query.city as string);
     const data = await weather.setCurrent();
-    console.log(data)
+    console.log(data);
     response.send(data);
   });
 
@@ -76,7 +75,11 @@ async function main() {
       }
 
       // Utilisez la méthode createNew pour créer une nouvelle entrée en base de données
-      const place = await newPlace.createNew(searchCity.city, latitude, longitude);
+      const place = await newPlace.createNew(
+        searchCity.city,
+        latitude,
+        longitude
+      );
 
       // Répondez avec les données créées
       return response.status(200).json(place);
