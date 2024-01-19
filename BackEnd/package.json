@@ -8,7 +8,7 @@
     "build": "tsc",
     "start": "node dist",
     "start:watch": "nodemon dist",
-    "build:watch" : "tsc -w",
+    "build:watch": "tsc -w",
     "build:start": "tsc && npm run start:watch",
     "dev": "npm run build && (npm run build:watch & npm run start:watch)"
   },
@@ -24,6 +24,9 @@
   },
   "dependencies": {
     "express": "^5.0.0-beta.1",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "reflect-metadata": "^0.2.1",
+    "sqlite3": "^5.1.7",
+    "typeorm": "^0.3.19"
   }
 }
