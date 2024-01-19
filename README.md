@@ -1,4 +1,4 @@
-# MyMéteo (Angular / Typescript)
+# MyMeteo (Angular / Typescript)
 
 Ce projet est une application web basée sur Angular avec une partie back-end écrite en TypeScript.
 
