@@ -6,8 +6,14 @@ const PORT = 3500;
 async function main() {
   const server = express();
 
+  server.get("/weather", async (request, response) => {
+    const weather = new Weather("Paris");
+    await weather.setCurrent();
+    return response.json(weather);
+  });
+
   server.get("/", (request, response) => {
-      response.send("Hello World !");
+    response.send("Hello World !");
   });
 
   server.listen(PORT, () => {
