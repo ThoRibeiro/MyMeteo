@@ -5,6 +5,7 @@ import express from "express";
 
 import { Weather } from "./functions/weather";
 import { Place } from "./Schemas/place";
+import { Search } from "./functions/search";
 
 const dataSource = new DataSource({
   type: "sqlite",

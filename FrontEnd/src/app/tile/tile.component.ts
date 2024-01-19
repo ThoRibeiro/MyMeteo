@@ -25,13 +25,13 @@ export class TileComponent {
 
   ngOnInit() {
     this.setGrandiantBackgroundIemperature();
-    this.fetchWeather('Paris');
+    this.fetchWeather(this.selectedCity);
   }
 
   fetchWeather(city: string) {
     this.weatherService.getWeather(city).subscribe((data) => {
       if (data) {
-        console.log(data);
+        this.temperature = data.current.temperature_2m;
       }
     });
   }
