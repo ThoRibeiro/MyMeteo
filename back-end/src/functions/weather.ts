@@ -1,4 +1,4 @@
-import { TemperatureUnit } from './../interfaces/temperature-unit';
+import { TemperatureUnit } from '../interfaces/temperature-unit';
 import { Coordianates, WeatherInterface } from "../interfaces/weather";
 import { CODES_METEO } from "../interfaces/weather-codes";
 
