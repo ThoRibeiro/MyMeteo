@@ -11,7 +11,7 @@ export class Search {
   }
 
   /**
-   * Initialise la météo en appelant l'API météo.
+   * Initialise la search en appelant l'API geoCodeMaps.
    */
   async setCity(): Promise<SearchCity | undefined> {
     if (!this.city) {
