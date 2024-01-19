@@ -24,6 +24,7 @@ async function main() {
   server.get("/weather", async (request, response) => {
     const weather = new Weather(request.query.city as string);
     const data = await weather.setCurrent();
+    console.log(data)
     response.send(data);
   });
 
@@ -46,9 +47,44 @@ async function main() {
         .json({ error: "You must supply query param `city` to search" });
     }
     const searchCity = new Search(query.city as string);
-    const data = await searchCity.setCity()
+    const data = await searchCity.setCity();
 
     return response.json(data);
+  });
+
+  server.post("/places", async (request, response) => {
+    try {
+      const query = request.query;
+      const searchCity = new Search(query.city as string);
+      const newPlace = new Place();
+      const data: SearchCity | undefined = await searchCity.setCity();
+
+      if (data === undefined) {
+        return response.status(404).json({ error: "City not found" });
+      }
+
+      let longitude: number;
+      let latitude: number;
+
+      if (data.lon !== undefined && data.lat !== undefined) {
+        longitude = data.lon;
+        latitude = data.lat;
+      } else {
+        return response
+          .status(404)
+          .json({ error: "Longitude or latitude not found in the data" });
+      }
+
+      // Utilisez la méthode createNew pour créer une nouvelle entrée en base de données
+      const place = await newPlace.createNew(searchCity.city, latitude, longitude);
+
+      // Répondez avec les données créées
+      return response.status(200).json(place);
+    } catch (error) {
+      // Gérez les erreurs ici, renvoyez une réponse appropriée
+      console.error(error);
+      return response.status(500).json({ error: "Internal Server Error" });
+    }
   });
 
   server.listen(PORT, () => {
