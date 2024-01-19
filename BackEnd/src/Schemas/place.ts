@@ -14,15 +14,12 @@ export class Place extends BaseEntity {
   @Column({ nullable: true })
   longitude?: number;
 
-  @Column()
-  favorite?: boolean;
 
-  static async createNew(name: string, latitude: number, longitude: number, favorite : boolean) {
+   async createNew(name: string, latitude: number, longitude: number) {
     const place = new Place();
     place.name = name;
     place.latitude = latitude;
     place.longitude = longitude;
-    place.favorite = favorite;
 
     await place.save();
     await place.reload();

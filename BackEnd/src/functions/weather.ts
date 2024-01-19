@@ -26,7 +26,7 @@ export class Weather implements WeatherInterface {
   /**
    * Initialise la météo en appelant l'API météo.
    */
-  async setCurrent() : Promise<void> {
+  async setCurrent() : Promise<Weather> {
     const coordinates = COORDINATES_FOR_CITIES.find(coord => coord.city.toLowerCase() === this.city.toLowerCase());
     if (!coordinates) {
       throw new Error(`Coordonnées non trouvées pour la ville ${this.city}`);
@@ -44,6 +44,7 @@ export class Weather implements WeatherInterface {
     this.weatherCode = weather.current.weather_code;
   
     console.log("Valeurs de température et code météo après l'initialisation :", this.temperatureCelsius, this.weatherCode);
+    return weather;
   }
   
 

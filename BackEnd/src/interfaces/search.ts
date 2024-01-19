@@ -4,8 +4,8 @@ interface SearchCity {
   osm_type: string;
   osm_id: number;
   boundingbox: [string, string, string, string];
-  lat: string;
-  lon: string;
+  lat: number;
+  lon: number;
   display_name: string;
   class: string;
   type: string;

@@ -11,5 +11,4 @@ export type Coordianates = {
   city : string;
   latitude : number;
   longitude : number;
-
 }
