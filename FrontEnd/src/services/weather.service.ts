@@ -5,9 +5,12 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root',
 })
 export class WeatherService {
+  url: string = 'http://localhost:';
+  port: string = '3500';
+
   constructor(private http: HttpClient) {}
 
   getWeather(city: string) {
-    return this.http.get(`http://localhost:3500/weather?city=${city}`);
+    return this.http.get(`${this.url}:${this.port}/weather?city=${city}`);
   }
 }

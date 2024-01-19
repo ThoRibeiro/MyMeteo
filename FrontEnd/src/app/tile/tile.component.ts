@@ -1,3 +1,4 @@
+import { TemperatureUnit } from './../../../../back-end/src/interfaces/temperature-unit';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -31,6 +32,7 @@ export class TileComponent {
   fetchWeather(city: string) {
     this.weatherService.getWeather(city).subscribe((data) => {
       if (data) {
+        console.log(data);
         this.temperature = data.current.temperature_2m;
       }
     });
