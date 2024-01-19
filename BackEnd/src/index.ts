@@ -5,6 +5,7 @@ import express from "express";
 
 import { Weather } from "./functions/weather";
 import { Place } from "./Schemas/place";
+import { Search } from "./functions/search";
 
 const dataSource = new DataSource({
   type: "sqlite",
@@ -37,10 +38,17 @@ async function main() {
     return response.json();
   });
 
-  server.post("/favorites", async (request, response) => {});
+  server.get("/search/places", async (request, response) => {
+    const query = request.query;
+    if (!query.city || Array.isArray(query.city)) {
+      return response
+        .status(400)
+        .json({ error: "You must supply query param `city` to search" });
+    }
+    const searchCity = new Search(query.city as string);
+    const data = await searchCity.setCity()
 
-  server.get("/", (request, response) => {
-    response.send("Hello World !");
+    return response.json(data);
   });
 
   server.listen(PORT, () => {
