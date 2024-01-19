@@ -12,6 +12,10 @@ async function main() {
     return response.json(weather);
   });
 
+  server.post("/favorites", async (request, response) => {
+    
+  });
+
   server.get("/", (request, response) => {
     response.send("Hello World !");
   });
