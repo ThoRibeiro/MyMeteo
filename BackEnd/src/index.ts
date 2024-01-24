@@ -1,7 +1,9 @@
 import "reflect-metadata";
 
 import { DataSource } from "typeorm";
+
 import express from "express";
+import bodyParser from "body-parser";
 
 import { Weather } from "./functions/weather";
 import { Place } from "./Schemas/place";
@@ -16,10 +18,14 @@ const dataSource = new DataSource({
 
 const PORT = 3500;
 
+/**
+ * Initialise le serveur Express avec les routes nécessaires.
+ */
 async function main() {
   const server = express();
   await dataSource.initialize();
   console.log("BDD start : OK !");
+  server.use(bodyParser.json());
 
   server.get("/weather", async (request, response) => {
     const weather = new Weather(request.query.city as string);
@@ -39,6 +45,9 @@ async function main() {
     return response.json();
   });
 
+  /**
+   * Obtient les informations météorologiques pour une ville donnée.
+   */
   server.get("/search/places", async (request, response) => {
     const query = request.query;
     if (!query.city || Array.isArray(query.city)) {
@@ -48,41 +57,52 @@ async function main() {
     }
     const searchCity = new Search(query.city as string);
     const data = await searchCity.setCity();
-
     return response.json(data);
   });
 
-  server.post("/places", async (request, response) => {
+  /**
+   * Crée un nouvel emplacement (favori) en fonction des données fournies dans le corps de la requête.
+   */
+  server.post("/favorites", async (request, response) => {
     try {
-      const query = request.query;
-      const searchCity = new Search(query.city as string);
-      const newPlace = new Place();
-      const data: SearchCity | undefined = await searchCity.setCity();
+      const { city, latitude, longitude} = request.body;
 
-      if (data === undefined) {
-        return response.status(404).json({ error: "City not found" });
+      if (!city || !latitude || !longitude) {
+        return response.status(400).json({ error: `Missing parameters city :${city}, latitude: ${latitude}, longitude: ${longitude}` });
       }
 
-      let longitude: number;
-      let latitude: number;
+      const place : Place = new Place();
+      await place.createNew(city, latitude, longitude);
 
-      if (data.lon !== undefined && data.lat !== undefined) {
-        longitude = data.lon;
-        latitude = data.lat;
-      } else {
-        return response
-          .status(404)
-          .json({ error: "Longitude or latitude not found in the data" });
-      }
+      return response.status(201).json(place);
 
-      // Utilisez la méthode createNew pour créer une nouvelle entrée en base de données
-      const place = await newPlace.createNew(searchCity.city, latitude, longitude);
-
-      // Répondez avec les données créées
-      return response.status(200).json(place);
     } catch (error) {
-      // Gérez les erreurs ici, renvoyez une réponse appropriée
-      console.error(error);
+      console.error("Error creating favorite:", error);
+      return response.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+  /**
+   * Supprime un emplacement (favori) en fonction de la ville fournie.
+   */
+  server.delete("/favorites/:city", async (request, response) => {
+    try {
+      const cityToDelete = request.params.city;
+
+      if (!cityToDelete) {
+        return response.status(400).json({ error: "Missing city parameter" });
+      }
+
+      const placeToDelete = await Place.findOne({ where: { city: cityToDelete } });
+
+      if (placeToDelete) {
+        await placeToDelete.remove();
+        return response.status(204).send();
+      } else {
+        return response.status(404).json({ error: `City ${cityToDelete} not found` });
+      }
+    } catch (error) {
+      console.error("Error deleting favorite:", error);
       return response.status(500).json({ error: "Internal Server Error" });
     }
   });
