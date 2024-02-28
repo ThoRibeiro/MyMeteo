@@ -47,7 +47,7 @@ Ce projet est une application web basée sur Angular avec une partie back-end é
    npm run dev
    ```
 
-   Le back-end sera accessible à l'adresse http://localhost:3000 par défaut.
+   Le back-end sera accessible à l'adresse http://localhost:3500 par défaut.
 
 2. **Lancer le front-end**
 
