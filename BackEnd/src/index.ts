@@ -1,31 +1,66 @@
 import "reflect-metadata";
 
 import { DataSource } from "typeorm";
+
 import express from "express";
+import bodyParser from "body-parser";
 
 import { Weather } from "./functions/weather";
 import { Place } from "./Schemas/place";
 import { Search } from "./functions/search";
+import {forecastWeatherWithCity} from "./functions/forecastWeather";
 
 const dataSource = new DataSource({
   type: "sqlite",
   database: "./sqlite.db",
   entities: [Place],
   synchronize: true,
-});
+})
 
 const PORT = 3500;
 
+
+/**
+ * Initialise le serveur Express avec les routes nécessaires.
+ */
 async function main() {
   const server = express();
   await dataSource.initialize();
   console.log("BDD start : OK !");
+  server.use(bodyParser.json());
+
+  server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
 
   server.get("/weather", async (request, response) => {
-    const weather = new Weather(request.query.city as string);
-    const data = await weather.setCurrent();
-    console.log(data)
-    response.send(data);
+    const favorites = request.query.favorites === 'true';
+
+    if (favorites) {
+      try {
+        const weather = new Weather("");
+        const weatherFavorites = await weather.getWeatherFavorites()
+        return response.status(200).json(weatherFavorites);
+      } catch (error) {
+        console.error("Error fetching weather for favorites:", error);
+        return response.status(500).json({ error: "Internal Server Error" });
+      }
+    } else {
+      const city = request.query.city as string;
+
+      if (!city) {
+        return response.status(400).json({ error: "Missing city parameter" });
+      }
+
+      try {
+        const weather = new Weather(city);
+        const data = await weather.setCurrent(city);
+        return response.status(200).json(data);
+      } catch (error) {
+        console.error("Error fetching weather:", error);
+        return response.status(500).json({ error: "Internal Server Error" });
+      }
+    }
   });
 
   server.get("/search/locations", async (request, response) => {
@@ -39,6 +74,9 @@ async function main() {
     return response.json();
   });
 
+  /**
+   * Obtient les informations météorologiques pour une ville donnée.
+   */
   server.get("/search/places", async (request, response) => {
     const query = request.query;
     if (!query.city || Array.isArray(query.city)) {
@@ -48,47 +86,84 @@ async function main() {
     }
     const searchCity = new Search(query.city as string);
     const data = await searchCity.setCity();
-
     return response.json(data);
   });
 
-  server.post("/places", async (request, response) => {
+  /**
+   * Crée un nouvel emplacement (favori) en fonction des données fournies dans le corps de la requête.
+   */
+  server.post("/favorites", async (request, response) => {
     try {
-      const query = request.query;
-      const searchCity = new Search(query.city as string);
-      const newPlace = new Place();
-      const data: SearchCity | undefined = await searchCity.setCity();
+      const { city } = request.body;
 
-      if (data === undefined) {
-        return response.status(404).json({ error: "City not found" });
+
+      const search = new Search(city);
+      const coordinates : Coordinates = await search.setLatitudeAndLongitude(city) as Coordinates;
+      if (!city || !coordinates) {
+        return response.status(400).json({ error: `Missing parameters city: ${city}, latitude: ${coordinates.lat} and longitude: ${coordinates.lon}` });
       }
 
-      let longitude: number;
-      let latitude: number;
+      const place : Place = new Place();
+      await place.createNew(city, coordinates.lat, coordinates.lon);
 
-      if (data.lon !== undefined && data.lat !== undefined) {
-        longitude = data.lon;
-        latitude = data.lat;
-      } else {
-        return response
-          .status(404)
-          .json({ error: "Longitude or latitude not found in the data" });
-      }
+      return response.status(201).json(place);
 
-      // Utilisez la méthode createNew pour créer une nouvelle entrée en base de données
-      const place = await newPlace.createNew(searchCity.city, latitude, longitude);
-
-      // Répondez avec les données créées
-      return response.status(200).json(place);
     } catch (error) {
-      // Gérez les erreurs ici, renvoyez une réponse appropriée
-      console.error(error);
+      console.error("Error creating favorite:", error);
       return response.status(500).json({ error: "Internal Server Error" });
     }
   });
 
-  server.listen(PORT, () => {
-    console.log("Server is running on port " + PORT);
+  /**
+   * Supprime un emplacement (favori) en fonction de la ville fournie.
+   */
+  server.delete("/favorites/:city", async (request, response) => {
+    try {
+      const cityToDelete = request.params.city;
+
+      if (!cityToDelete) {
+        return response.status(400).json({ error: "Missing city parameter" });
+      }
+
+      const placeToDelete = await Place.findOne({ where: { city: cityToDelete } });
+
+      if (placeToDelete) {
+        await placeToDelete.remove();
+        return response.status(204).send();
+      } else {
+        return response.status(404).json({ error: `City ${cityToDelete} not found` });
+      }
+    } catch (error) {
+      console.error("Error deleting favorite:", error);
+      return response.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+  /**
+   * Renvoie la météo sur 10 jours en fonction de la ville donnée
+   */
+  server.get("/forecast/:city", async (request, response) => {
+    const city = request.params.city;
+
+    if (!city) {
+      return response.status(400).json({ error: "Missing city parameter" });
+    }
+
+    try {
+      const cityForecast = new forecastWeatherWithCity();
+      const weatherForecast = await cityForecast.getForecastWeatherWithCity(city);
+      return response.status(200).json(weatherForecast);
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message === "City not found in table 'place'") {
+          return response.status(404).json({ error: `City ${city} not found in favorites` });
+        } else {
+          return response.status(500).json({ error: "Internal Server Error" });
+        }
+      } else {
+        return response.status(500).json({ error: "Internal Server Error" });
+      }
+    }
   });
 }
 
