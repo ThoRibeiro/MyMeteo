@@ -3,6 +3,7 @@ import {ForecastWeather} from "../interfaces/weather";
 
 export class forecastWeatherWithCity {
     async getForecastWeatherWithCity(city : string) : Promise<ForecastWeather> {
+        city.toLowerCase();
         const place = await Place.findOne({ where: { city } });
 
         if(!place){

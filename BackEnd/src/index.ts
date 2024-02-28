@@ -8,7 +8,7 @@ import bodyParser from "body-parser";
 import { Weather } from "./functions/weather";
 import { Place } from "./Schemas/place";
 import { Search } from "./functions/search";
-import {forecastWeatherWithCity} from "./functions/forecastWeather";
+import { forecastWeatherWithCity } from "./functions/forecastWeather";
 
 const dataSource = new DataSource({
   type: "sqlite",
@@ -18,7 +18,6 @@ const dataSource = new DataSource({
 })
 
 const PORT = 3500;
-
 
 /**
  * Initialise le serveur Express avec les routes nécessaires.
@@ -33,7 +32,13 @@ async function main() {
     console.log(`Server is running on port ${PORT}`);
   });
 
-  server.get("/weather", async (request, response) => {
+  /**
+   * Récupère les données météorologiques en fonction des paramètres de la requête.
+   *
+   * Si le paramètre de requête 'favorites' est défini sur 'true', retourne la météo actuelle pour les villes favorites.
+   * Sinon, retourne la météo actuelle pour la ville spécifiée dans le paramètre de requête 'city'.
+   */
+   server.get("/weather", async (request, response) => {
     const favorites = request.query.favorites === 'true';
 
     if (favorites) {
@@ -63,6 +68,9 @@ async function main() {
     }
   });
 
+  /**
+   * Recherche des emplacements en fonction du nom fourni dans la requête.
+   */
   server.get("/search/locations", async (request, response) => {
     const query = request.query;
     // console.log(request.query);
@@ -84,6 +92,7 @@ async function main() {
         .status(400)
         .json({ error: "You must supply query param `city` to search" });
     }
+
     const searchCity = new Search(query.city as string);
     const data = await searchCity.setCity();
     return response.json(data);
@@ -95,7 +104,7 @@ async function main() {
   server.post("/favorites", async (request, response) => {
     try {
       const { city } = request.body;
-
+      city.toLowerCase()
 
       const search = new Search(city);
       const coordinates : Coordinates = await search.setLatitudeAndLongitude(city) as Coordinates;
@@ -120,18 +129,19 @@ async function main() {
   server.delete("/favorites/:city", async (request, response) => {
     try {
       const cityToDelete = request.params.city;
+      let cityDelete = cityToDelete.toLowerCase()
 
-      if (!cityToDelete) {
+      if (!cityDelete) {
         return response.status(400).json({ error: "Missing city parameter" });
       }
 
-      const placeToDelete = await Place.findOne({ where: { city: cityToDelete } });
+      const placeToDelete = await Place.findOne({ where: { city: cityDelete } });
 
       if (placeToDelete) {
         await placeToDelete.remove();
         return response.status(204).send();
       } else {
-        return response.status(404).json({ error: `City ${cityToDelete} not found` });
+        return response.status(404).json({ error: `City ${cityDelete} not found` });
       }
     } catch (error) {
       console.error("Error deleting favorite:", error);
@@ -144,19 +154,20 @@ async function main() {
    */
   server.get("/forecast/:city", async (request, response) => {
     const city = request.params.city;
+    let cityToForecast = city.toLowerCase();
 
-    if (!city) {
+    if (!cityToForecast) {
       return response.status(400).json({ error: "Missing city parameter" });
     }
 
     try {
       const cityForecast = new forecastWeatherWithCity();
-      const weatherForecast = await cityForecast.getForecastWeatherWithCity(city);
+      const weatherForecast = await cityForecast.getForecastWeatherWithCity(cityToForecast);
       return response.status(200).json(weatherForecast);
     } catch (error) {
       if (error instanceof Error) {
         if (error.message === "City not found in table 'place'") {
-          return response.status(404).json({ error: `City ${city} not found in favorites` });
+          return response.status(404).json({ error: `City ${cityToForecast} not found in favorites` });
         } else {
           return response.status(500).json({ error: "Internal Server Error" });
         }

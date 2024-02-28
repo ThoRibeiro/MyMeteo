@@ -37,12 +37,10 @@ export class Weather implements WeatherInterface {
     );
     const weather = await weatherResponse.json();
 
-    console.log("Weather API response for the city:",city," ", weather);
 
     this.temperatureCelsius = weather.current.temperature_2m;
     this.weatherCode = weather.current.weather_code;
 
-    console.log("Temperature and weather code values: ", this.temperatureCelsius," ", this.weatherCode);
     return weather;
   }
 
