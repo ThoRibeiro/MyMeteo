@@ -1,8 +1,8 @@
-import { ForecastWeather } from "../interfaces/weather";
 import { Place } from "../Schemas/place";
+import {ForecastWeather} from "../interfaces/weather";
 
 export class forecastWeatherWithCity {
-    async getForecastWeatherWithCity(city : string){
+    async getForecastWeatherWithCity(city : string) : Promise<ForecastWeather> {
         const place = await Place.findOne({ where: { city } });
 
         if(!place){

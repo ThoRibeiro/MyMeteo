@@ -19,6 +19,7 @@ const dataSource = new DataSource({
 
 const PORT = 3500;
 
+
 /**
  * Initialise le serveur Express avec les routes nécessaires.
  */
@@ -28,11 +29,38 @@ async function main() {
   console.log("BDD start : OK !");
   server.use(bodyParser.json());
 
+  server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+
   server.get("/weather", async (request, response) => {
-    const weather = new Weather(request.query.city as string);
-    const data = await weather.setCurrent();
-    console.log(data)
-    response.send(data);
+    const favorites = request.query.favorites === 'true';
+
+    if (favorites) {
+      try {
+        const weather = new Weather("");
+        const weatherFavorites = await weather.getWeatherFavorites()
+        return response.status(200).json(weatherFavorites);
+      } catch (error) {
+        console.error("Error fetching weather for favorites:", error);
+        return response.status(500).json({ error: "Internal Server Error" });
+      }
+    } else {
+      const city = request.query.city as string;
+
+      if (!city) {
+        return response.status(400).json({ error: "Missing city parameter" });
+      }
+
+      try {
+        const weather = new Weather(city);
+        const data = await weather.setCurrent(city);
+        return response.status(200).json(data);
+      } catch (error) {
+        console.error("Error fetching weather:", error);
+        return response.status(500).json({ error: "Internal Server Error" });
+      }
+    }
   });
 
   server.get("/search/locations", async (request, response) => {
@@ -120,13 +148,22 @@ async function main() {
     if (!city) {
       return response.status(400).json({ error: "Missing city parameter" });
     }
-    const cityForecast = new forecastWeatherWithCity()
-    const weatherForecast = await cityForecast.getForecastWeatherWithCity(city);
 
-    if(!weatherForecast){
-      throw new Error(`Weather forecast in ${city} is not available. Try again later...`);
+    try {
+      const cityForecast = new forecastWeatherWithCity();
+      const weatherForecast = await cityForecast.getForecastWeatherWithCity(city);
+      return response.status(200).json(weatherForecast);
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message === "City not found in table 'place'") {
+          return response.status(404).json({ error: `City ${city} not found in favorites` });
+        } else {
+          return response.status(500).json({ error: "Internal Server Error" });
+        }
+      } else {
+        return response.status(500).json({ error: "Internal Server Error" });
+      }
     }
-    return response.status(200).json(weatherForecast);
   });
 }
 
