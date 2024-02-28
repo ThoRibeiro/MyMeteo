@@ -1,5 +1,5 @@
 import { TemperatureUnit } from '../interfaces/temperature-unit';
-import { Coordianates, WeatherInterface } from "../interfaces/weather";
+import {Coordianates, ForecastWeather, WeatherInterface} from "../interfaces/weather";
 import { CODES_METEO } from "../interfaces/weather-codes";
 
 const COORDINATES_FOR_CITIES: Coordianates[] = [
@@ -58,27 +58,9 @@ export class Weather implements WeatherInterface {
     return (celsius * 9/5) + 32;
   }
 
-  /**
-   * Affiche les informations météorologiques pour une ville donnée dans la console.
-   */
-  printWeatherForCity(temperatureUnit: TemperatureUnit): void {
-    const temperature = temperatureUnit === 'Fahrenheit' ? this.celsiusToFahrenheit(this.temperatureCelsius) : this.temperatureCelsius;
-    const codeMeteo = CODES_METEO[this.weatherCode];
-  
-    // Définir la largeur des colonnes
-    const columnWidth = 30;
-  
-    // Espaces monospaces pour l'alignement
-    const monospaceSpace = '\u2003';
-  
-    // Afficher le tableau avec des lignes de séparation
-    console.log('╔' + '═'.repeat(columnWidth) + '╗');
-    console.log(`║ Météo pour${monospaceSpace}${this.city}`.padEnd(columnWidth, ' ') + ' ║');
-    console.log('╠' + '═'.repeat(columnWidth) + '╣');
-    console.log(`║ Température:${monospaceSpace}${temperature} ${temperatureUnit === 'Fahrenheit' ? "°F" : "°C"}`.padEnd(columnWidth, ' ') + ' ║');
-    console.log(`║ Code météo:${monospaceSpace}${this.weatherCode} ${codeMeteo.icon}`.padEnd(columnWidth, '') + '║');
-    console.log('╚' + '═'.repeat(columnWidth) + '╝');
+  async getWeatherFavorites(){
+
+
   }
-  
-  
+
 }

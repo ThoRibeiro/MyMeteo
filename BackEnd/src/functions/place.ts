@@ -1,7 +1,5 @@
 export class PlaceFav {
     city: string;
-    longitude? : number;
-    latitude? : number;
   
     /**
      * Constructeur de Place à partir du nom d'une ville, latitude et longitude.
@@ -15,8 +13,9 @@ export class PlaceFav {
     /**
      * Initialise la search en appelant l'API geoCodeMaps.
      */
-    async setCity(): Promise<SearchCity | undefined> {
-      if (!this.city) {
+    async setCity(city : string): Promise<SearchCity | undefined> {
+        this.city = city;
+        if (!this.city) {
         throw new Error(`Ville non trouvées pour la recherche: ${this.city}`);
       }
   
@@ -31,10 +30,7 @@ export class PlaceFav {
           );
         }
         const search = await searchResponse.json();
-        const firstResult: SearchCity = search[0];
-        console.log("Réponse de l'API search :", firstResult);
-  
-        return firstResult;
+        return search;
       } catch (error) {
         console.error(
           "Erreur lors de la recherche:",

@@ -11,3 +11,8 @@ interface SearchCity {
   type: string;
   importance: number;
 }
+
+interface Coordinates {
+  lat: number;
+  lon: number;
+}

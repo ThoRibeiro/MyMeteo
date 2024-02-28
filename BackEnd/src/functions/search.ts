@@ -11,7 +11,7 @@ export class Search {
   }
 
   /**
-   * Initialise la search en appelant l'API geoCodeMaps.
+   * Initialise la search en appelant l'API geoCodeMaps. Permet aussi d'avoir la latitude et longitude d'une Ville.
    */
   async setCity(): Promise<SearchCity | undefined> {
     if (!this.city) {
@@ -33,7 +33,6 @@ export class Search {
 
       const firstResult: SearchCity = search[0];
       console.log("Réponse de l'API search :", firstResult);
-
       return firstResult;
     } catch (error) {
       console.error(
@@ -42,4 +41,33 @@ export class Search {
       );
     }
   }
+  async setLatitudeAndLongitude(city : string) : Promise<Coordinates> {
+    if (!this.city) {
+      throw new Error(`City not preset`);
+    }
+    try {
+      const searchResponse = await fetch(
+          `https://geocode.maps.co/search?q=${this.city}&api_key=65a4fed00e84b807084661tisfc7f77`
+      );
+      if (!searchResponse.ok) {
+        throw new Error(
+            `Erreur HTTP: ${searchResponse.status} - ${searchResponse.statusText}`
+        );
+      }
+
+      const search = await searchResponse.json();
+      const firstResult: SearchCity = search[0];
+
+      console.log("Réponse de l'API longitude+latitude :", firstResult);
+      const { lat, lon} = firstResult;
+      return { lat, lon };
+    } catch (error) {
+      console.error(
+          "Error in search for latitude and longitude :",
+          error instanceof Error ? error.message : "Don't know Error"
+      );
+
+      throw new Error("Error in search for latitude and longitude");
+    }
+    }
 }

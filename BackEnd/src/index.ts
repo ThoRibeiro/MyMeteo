@@ -8,13 +8,14 @@ import bodyParser from "body-parser";
 import { Weather } from "./functions/weather";
 import { Place } from "./Schemas/place";
 import { Search } from "./functions/search";
+import {forecastWeatherWithCity} from "./functions/forecastWeather";
 
 const dataSource = new DataSource({
   type: "sqlite",
   database: "./sqlite.db",
   entities: [Place],
   synchronize: true,
-});
+})
 
 const PORT = 3500;
 
@@ -65,14 +66,17 @@ async function main() {
    */
   server.post("/favorites", async (request, response) => {
     try {
-      const { city, latitude, longitude} = request.body;
+      const { city } = request.body;
 
-      if (!city || !latitude || !longitude) {
-        return response.status(400).json({ error: `Missing parameters city :${city}, latitude: ${latitude}, longitude: ${longitude}` });
+
+      const search = new Search(city);
+      const coordinates : Coordinates = await search.setLatitudeAndLongitude(city) as Coordinates;
+      if (!city || !coordinates) {
+        return response.status(400).json({ error: `Missing parameters city: ${city}, latitude: ${coordinates.lat} and longitude: ${coordinates.lon}` });
       }
 
       const place : Place = new Place();
-      await place.createNew(city, latitude, longitude);
+      await place.createNew(city, coordinates.lat, coordinates.lon);
 
       return response.status(201).json(place);
 
@@ -107,8 +111,22 @@ async function main() {
     }
   });
 
-  server.listen(PORT, () => {
-    console.log("Server is running on port " + PORT);
+  /**
+   * Renvoie la météo sur 10 jours en fonction de la ville donnée
+   */
+  server.get("/forecast/:city", async (request, response) => {
+    const city = request.params.city;
+
+    if (!city) {
+      return response.status(400).json({ error: "Missing city parameter" });
+    }
+    const cityForecast = new forecastWeatherWithCity()
+    const weatherForecast = await cityForecast.getForecastWeatherWithCity(city);
+
+    if(!weatherForecast){
+      throw new Error(`Weather forecast in ${city} is not available. Try again later...`);
+    }
+    return response.status(200).json(weatherForecast);
   });
 }
 
