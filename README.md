@@ -35,7 +35,7 @@ Ce projet est une application web basée sur Angular avec une partie back-end é
 
 2. **Configurer le front-end**
 
-   Dans le dossier `front-end/src/` ?
+   Dans le dossier `front-end/src/` 
 
 ## Exécution
 
@@ -44,7 +44,7 @@ Ce projet est une application web basée sur Angular avec une partie back-end é
    Dans le dossier `back-end`, exécutez la commande suivante pour démarrer le serveur :
 
    ```bash
-   npm dev
+   npm run dev
    ```
 
    Le back-end sera accessible à l'adresse http://localhost:3000 par défaut.
