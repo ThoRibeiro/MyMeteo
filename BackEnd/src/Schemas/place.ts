@@ -1,4 +1,5 @@
 import {BaseEntity, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {response} from "express";
 
 @Entity()
 export class Place extends BaseEntity {
@@ -14,27 +15,27 @@ export class Place extends BaseEntity {
     @Column({nullable: true})
     longitude?: number;
 
-    async createNew(city: string, latitude: number, longitude: number): Promise<Place | null> {
+    /**
+     * Crée une nouvelle entrée dans la base de données pour une ville si elle n'existe pas déjà.
+     *
+     * @param {string} city - Le nom de la ville.
+     * @param {number} latitude - La latitude de la ville.
+     * @param {number} longitude - La longitude de la ville.
+     */
+    async createNew(city: string, latitude: number, longitude: number): Promise<Place | string> {
         const existingPlace = await Place.findOne({ where: { city } });
 
         if (existingPlace) {
-            console.log(`The city -> ${city} is found in BDD.`);
-            return null;
+            return "City found in BDD";
         }
 
         const newPlace = new Place();
-        newPlace.city = city;
+        newPlace.city = city.toLowerCase();
         newPlace.latitude = latitude;
         newPlace.longitude = longitude;
 
         await newPlace.save();
         await newPlace.reload();
         return newPlace;
-    }
-
-    async deletePlace(city: string): Promise<string> {
-        const placeToDelete = await Place.findOne({ where: { city } });
-        await placeToDelete?.remove();
-        return "Place to delete";
     }
 }

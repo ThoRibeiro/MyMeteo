@@ -1,0 +1,166 @@
+{
+	"info": {
+		"_postman_id": "2a2b5550-d200-4086-b415-5b69868fcb0e",
+		"name": "Cours / MyMeteo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24657032"
+	},
+	"item": [
+		{
+			"name": "search/places?=",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3500/search/places?city=Valenciennes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3500",
+					"path": [
+						"search",
+						"places"
+					],
+					"query": [
+						{
+							"key": "city",
+							"value": "Valenciennes"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/weather?favorites=true",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3500/weather?favorites=true",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3500",
+					"path": [
+						"weather"
+					],
+					"query": [
+						{
+							"key": "favorites",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/favorites",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"city\" : \"Roubaix\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3500/favorites",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3500",
+					"path": [
+						"favorites"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/favorites/:city",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3500/favorites/:city",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3500",
+					"path": [
+						"favorites",
+						":city"
+					],
+					"variable": [
+						{
+							"key": "city",
+							"value": "Paris"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/forecast/:location",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3500/forecast/:city",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3500",
+					"path": [
+						"forecast",
+						":city"
+					],
+					"variable": [
+						{
+							"key": "city",
+							"value": "Valenciennes"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/weather?city=",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3500/weather?city=Paris",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3500",
+					"path": [
+						"weather"
+					],
+					"query": [
+						{
+							"key": "city",
+							"value": "Paris"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

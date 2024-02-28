@@ -32,7 +32,6 @@ export class Search {
       const search = await searchResponse.json();
 
       const firstResult: SearchCity = search[0];
-      console.log("Réponse de l'API search :", firstResult);
       return firstResult;
     } catch (error) {
       console.error(
@@ -58,7 +57,6 @@ export class Search {
       const search = await searchResponse.json();
       const firstResult: SearchCity = search[0];
 
-      console.log("Réponse de l'API longitude+latitude :", firstResult);
       const { lat, lon} = firstResult;
       return { lat, lon };
     } catch (error) {

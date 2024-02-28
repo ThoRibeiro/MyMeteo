@@ -14,9 +14,9 @@ export class PlaceFav {
      * Initialise la search en appelant l'API geoCodeMaps.
      */
     async setCity(city : string): Promise<SearchCity | undefined> {
-        this.city = city;
+        this.city = city.toLowerCase();
         if (!this.city) {
-        throw new Error(`Ville non trouvées pour la recherche: ${this.city}`);
+        throw new Error(`City not found in search: ${this.city}`);
       }
   
       try {
@@ -33,8 +33,8 @@ export class PlaceFav {
         return search;
       } catch (error) {
         console.error(
-          "Erreur lors de la recherche:",
-          error instanceof Error ? error.message : "Erreur inconnue"
+          "Error in search :",
+          error instanceof Error ? error.message : "Erreur not found"
         );
       }
     }
