@@ -1,29 +1,25 @@
 import { useState } from "react";
 
 export function Temperature() {
-  //   type TemperatureUnit = "CELCIUS" | "FAHRENHEIT";
   enum TemperatureUnit {
-    CELCIUS = "Celsius",
-    FAHRENHEIT = "Fahrenheit",
+    CELCIUS = "C",
+    FAHRENHEIT = "F",
   }
 
   const TEMPERATURE = 5;
   const [isCelcius, setIsCelcius] = useState(true);
   const [unit, setUnit] = useState<TemperatureUnit>(TemperatureUnit.CELCIUS);
 
-  // JE SUIS EN LOVE SUR ALEXY LE GROS BG DE FOU
-  // LOVE ALEXY
-  // NUD3 ALEXY
-  // ALEXY LE GROS BG
-  // ALEXY LE GROS BG
-  // ALEXY LE GROS BG
-  // TROP BEAU LA CHEMISE DE ALEXY
-  // SEX_ALEXY.COM
-  // ALEXY LE GROS SEXE
+  function getTemperatureFahrenheit(celsius: number): number {
+    return (celsius * 9) / 5 + 32;
+  }
 
   return (
     <div>
-      {TEMPERATURE} °{unit}
+      {unit === TemperatureUnit.CELCIUS
+        ? TEMPERATURE
+        : getTemperatureFahrenheit(TEMPERATURE)}
+      °{unit}
       <fieldset>
         <legend> Unité d'affichage: </legend>
         <label>
