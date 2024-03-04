@@ -5,17 +5,28 @@ export function Temperature() {
 
   const [isCelcius, setIsCelcius] = useState(true);
 
+  console.log(isCelcius);
   return (
     <div>
-      {" "}
-      {TEMPERATURE}°C
+      {TEMPERATURE} °{isCelcius ? "C" : "F"}
       <fieldset>
         <legend> Unité d'affichage: </legend>
         <label>
-          <input type="radio" name="unit" value="Celsius" />
+          <input
+            type="radio"
+            name="unit"
+            value="Celsius"
+            onClick={() => setIsCelcius(true)}
+            defaultChecked
+          />
           Celsius
           <br />
-          <input type="radio" name="unit" value="Fahrenheit" />
+          <input
+            type="radio"
+            name="unit"
+            value="Fahrenheit"
+            onClick={() => setIsCelcius(false)}
+          />
           Fahrenheit
         </label>
       </fieldset>
