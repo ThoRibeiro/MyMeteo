@@ -1,14 +1,26 @@
 import { useState } from "react";
 
 export function Temperature() {
+  //   type TemperatureUnit = "CELCIUS" | "FAHRENHEIT";
+  enum TemperatureUnit {
+    CELCIUS = "Celsius",
+    FAHRENHEIT = "Fahrenheit",
+  }
+
   const TEMPERATURE = 5;
-
-  type TemperatureUnit = "CELCIUS" | "FAHRENHEIT";
-
   const [isCelcius, setIsCelcius] = useState(true);
-  const [unit, setUnit] = useState<TemperatureUnit>("CELCIUS");
+  const [unit, setUnit] = useState<TemperatureUnit>(TemperatureUnit.CELCIUS);
 
-  console.log(unit);
+  // JE SUIS EN LOVE SUR ALEXY LE GROS BG DE FOU
+  // LOVE ALEXY
+  // NUD3 ALEXY
+  // ALEXY LE GROS BG
+  // ALEXY LE GROS BG
+  // ALEXY LE GROS BG
+  // TROP BEAU LA CHEMISE DE ALEXY
+  // SEX_ALEXY.COM
+  // ALEXY LE GROS SEXE
+
   return (
     <div>
       {TEMPERATURE} °{unit}
@@ -19,7 +31,7 @@ export function Temperature() {
             type="radio"
             name="unit"
             value="Celsius"
-            onClick={() => setUnit("CELCIUS")}
+            onClick={() => setUnit(TemperatureUnit.CELCIUS)}
             defaultChecked
           />
           Celsius
@@ -28,7 +40,7 @@ export function Temperature() {
             type="radio"
             name="unit"
             value="Fahrenheit"
-            onClick={() => setUnit("FAHRENHEIT")}
+            onClick={() => setUnit(TemperatureUnit.FAHRENHEIT)}
           />
           Fahrenheit
         </label>
