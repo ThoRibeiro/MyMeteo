@@ -1,5 +1,5 @@
-import {Coordianates, WeatherInterface} from "../interfaces/weather";
-import {Place} from "../Schemas/place";
+import { Coordianates, WeatherInterface } from "../interfaces/weather";
+import { Place } from "../Schemas/place";
 
 export class Weather implements WeatherInterface {
   city: string;
@@ -19,13 +19,17 @@ export class Weather implements WeatherInterface {
   /**
    * Initialise la météo en appelant l'API météo.
    */
-  async setCurrent(city?:string) : Promise<Weather> {
+  async setCurrent(city?: string): Promise<Weather> {
     let coordinates: Coordianates | undefined;
 
     if (city) {
       const place = await Place.findOne({ where: { city: city } });
       if (place) {
-        coordinates = { city: place.city!, latitude: place.latitude!, longitude: place.longitude! };
+        coordinates = {
+          city: place.city!,
+          latitude: place.latitude!,
+          longitude: place.longitude!,
+        };
       }
     }
     if (!coordinates) {
@@ -37,13 +41,11 @@ export class Weather implements WeatherInterface {
     );
     const weather = await weatherResponse.json();
 
-
     this.temperatureCelsius = weather.current.temperature_2m;
     this.weatherCode = weather.current.weather_code;
 
     return weather;
   }
-
 
   /**
    * Convertit une température de degrés Celsius en degrés Fahrenheit.
@@ -52,7 +54,7 @@ export class Weather implements WeatherInterface {
    * @returns {number} La température convertie en degrés Fahrenheit.
    */
   celsiusToFahrenheit(celsius: number): number {
-    return (celsius * 9/5) + 32;
+    return (celsius * 9) / 5 + 32;
   }
 
   /**
@@ -60,7 +62,7 @@ export class Weather implements WeatherInterface {
    * @returns Une promesse résolue avec les données météorologiques pour les villes favorites.
    *          Les données sont filtrées pour exclure les valeurs nulles en cas d'erreur lors de la récupération de la météo pour une ville.
    */
-  async getWeatherFavorites() : Promise<any> {
+  async getWeatherFavorites(): Promise<Weather[]> {
     try {
       const favorites = await Place.find();
 
@@ -74,7 +76,7 @@ export class Weather implements WeatherInterface {
         }
       });
 
-      const weatherResults = await Promise.all(weatherPromises);
+      const weatherResults = (await Promise.all(weatherPromises)) as Weather[];
 
       return weatherResults;
     } catch (error) {
@@ -82,5 +84,4 @@ export class Weather implements WeatherInterface {
       throw new Error("Error fetching weather for favorites");
     }
   }
-
 }
