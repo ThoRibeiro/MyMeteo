@@ -3,12 +3,15 @@ import { useState } from "react";
 export function Temperature() {
   const TEMPERATURE = 5;
 
-  const [isCelcius, setIsCelcius] = useState(true);
+  type TemperatureUnit = "CELCIUS" | "FAHRENHEIT";
 
-  console.log(isCelcius);
+  const [isCelcius, setIsCelcius] = useState(true);
+  const [unit, setUnit] = useState<TemperatureUnit>("CELCIUS");
+
+  console.log(unit);
   return (
     <div>
-      {TEMPERATURE} °{isCelcius ? "C" : "F"}
+      {TEMPERATURE} °{unit}
       <fieldset>
         <legend> Unité d'affichage: </legend>
         <label>
@@ -16,7 +19,7 @@ export function Temperature() {
             type="radio"
             name="unit"
             value="Celsius"
-            onClick={() => setIsCelcius(true)}
+            onClick={() => setUnit("CELCIUS")}
             defaultChecked
           />
           Celsius
@@ -25,7 +28,7 @@ export function Temperature() {
             type="radio"
             name="unit"
             value="Fahrenheit"
-            onClick={() => setIsCelcius(false)}
+            onClick={() => setUnit("FAHRENHEIT")}
           />
           Fahrenheit
         </label>
